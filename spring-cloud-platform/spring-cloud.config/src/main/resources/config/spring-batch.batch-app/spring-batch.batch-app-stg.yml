@@ -1,0 +1,79 @@
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+  batch:
+    job:
+      names: NONE  # BatchAppRunner에 의해 Job이 실행되므로 실행하고자 하는 Job의 이름을 바인딩하지 못하도록 설정
+    jdbc:
+      initialize-schema: never   #always : 스크립트 항상 실행, never : 개발자가 직접 수동으로 1회 스크립트 실행
+  batch-manage:
+    datasource:
+      jdbc-url: jdbc:log4jdbc:postgresql://127.0.0.1:5432/batchdb?useUnicode=true&characterEncoding=utf8
+      username: batch
+      password: batch
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      type: com.zaxxer.hikari.HikariDataSource
+      hikari:
+        maximum-pool-size: 2
+        connection-test-query: SELECT 1
+      mybatis:
+        config: classpath:mybatis/config/mybatis-config.xml
+        mapper-locations: classpath*:com/spring/batch/**/mapper/batch/*Mapper.xml
+  mongo:
+    datasource:
+      uri: mongodb://mg:mg@127.0.0.1:27017/mgdb?authSource=mgdb
+      database: mgdb
+  oracle:
+    datasource:
+      jdbc-url: jdbc:log4jdbc:oracle:thin:@127.0.0.1:1521:xe
+      username: ora
+      password: ora
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      type: com.zaxxer.hikari.HikariDataSource
+      hikari:
+        maximum-pool-size: 2
+        connection-test-query: SELECT 1 FROM DUAL
+      mybatis:
+        config: classpath:mybatis/config/mybatis-config.xml
+        mapper-locations: classpath*:com/spring/batch/**/mapper/oracle/*Mapper.xml
+  postgres:
+    datasource:
+      jdbc-url: jdbc:log4jdbc:postgresql://127.0.0.1:5432/batchdb?useUnicode=true&characterEncoding=utf8&escapeSyntaxCallMode=callIfNoReturn
+      username: batch
+      password: batch
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      type: com.zaxxer.hikari.HikariDataSource
+      hikari:
+        maximum-pool-size: 2
+        connection-test-query: SELECT 1
+      mybatis:
+        config: classpath:mybatis/config/mybatis-config.xml
+        mapper-locations: classpath*:com/spring/batch/**/mapper/postgres/*Mapper.xml
+
+  kafka:
+    producer:
+      bootstrap-servers: 127.0.0.1:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      client-id: kafka-client
+    consumer:
+      bootstrap-servers: 127.0.0.1:9092
+      auto-offset-reset: earliest
+      group-id: kafka-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties.spring.json.trusted.packages: "*"
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    transport.protocol: smtp
+    debug: true
+    default.encoding: UTF-8
+    properties:
+      smtp:
+        auth: true
+        timeout: 5000
+        starttls.enable: true
+    username: ""
+    password: ""
