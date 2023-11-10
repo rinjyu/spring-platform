@@ -1,0 +1,210 @@
+server:
+  servlet:
+    context-path: /config
+
+spring:
+  application:
+    name: spring-cloud.config
+  profiles:
+    active: native
+    group:
+      native: jdbc
+      dev: git, jdbc
+      qa: git, jdbc
+      stg: git, jdbc
+      prod: git, jdbc
+  banner:
+    location: classpath:banner/banner.txt
+  cloud:
+    config:
+      server:
+        fail-on-composite-error: false
+
+logging:
+  config: classpath:logback/logback-${spring.profiles.active}.xml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+
+---
+server:
+  port: 8082
+
+spring:
+  config:
+    activate:
+      on-profile: native
+  cloud:
+    config:
+      server:
+        native:
+          order: 1
+          search-locations: classpath:config/{application}
+  datasource:
+    url: jdbc:log4jdbc:postgresql://127.0.0.1:5432/batchdb?useUnicode=true&characterEncoding=utf8
+    username: batch
+    password: batch
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 2
+      connection-test-query: SELECT 1
+
+
+---
+server:
+  port: 8082
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:log4jdbc:postgresql://127.0.0.1:5432/batchdb?useUnicode=true&characterEncoding=utf8
+    username: batch
+    password: batch
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 2
+      connection-test-query: SELECT 1
+
+
+---
+server:
+  port: 8082
+
+spring:
+  config:
+    activate:
+      on-profile: qa
+  datasource:
+    url: jdbc:log4jdbc:postgresql://127.0.0.1:5432/batchdb?useUnicode=true&characterEncoding=utf8
+    username: batch
+    password: batch
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 2
+      connection-test-query: SELECT 1
+
+
+---
+server:
+  port: 8082
+
+spring:
+  config:
+    activate:
+      on-profile: stg
+  datasource:
+    url: jdbc:log4jdbc:postgresql://127.0.0.1:5432/batchdb?useUnicode=true&characterEncoding=utf8
+    username: batch
+    password: batch
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 2
+      connection-test-query: SELECT 1
+
+
+---
+server:
+  port: 8082
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:log4jdbc:postgresql://127.0.0.1:5432/batchdb?useUnicode=true&characterEncoding=utf8
+    username: batch
+    password: batch
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 2
+      connection-test-query: SELECT 1
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: git, jdbc
+  cloud:
+    config:
+      server:
+        git:
+          order: 1
+          uri: https://github.com/rinjyu/spring-cloud.config.git
+          default-label: master
+          search-paths: src/main/resources/config/{application}
+          ignore-local-ssh-settings: true
+          skip-ssl-validation: true
+          private-key: |
+                        -----BEGIN RSA PRIVATE KEY-----
+                        MIIJKAIBAAKCAgEArBjWOS4hiceHneEV/KzZ5zoXpAN3LUUmIhtEPQQ6zLc9XboI
+                        0y6OptAdgm/pOlnOS1vZNTw3cN357PPx18oQMe71el4BJ2JkIuSmP5JDlfY9FV+j
+                        afx6cdv2Q6Fj3Y7b30BShbJRcd05dMRt0/pdzO/GGO6Ce2UwEwiESaB2w6ICZkOt
+                        078Z40x/IjGyKX7IOgGQazToN4cZ2boWw2Hk2UQRnuAGX7PINli7tdpFjA6/3dqO
+                        IBctkLBE0o4vxlXKZVVaCvRWgJwfj1MTRbh0+01WhtZPaAPhTdnNfJZro6fMzf9N
+                        C2Bf3xmPqk/AP66VkpcY87Hmu+aL77o08QH38RmbvDqVw1RwcVaoZso2hCyg0hEo
+                        q6Oeps7ibCrSLFnurvcAfPprwB34Lsjh6noTavj97DIQ/FswexS1A+0nDNMYrew8
+                        PMjz66zUNYlHIVzdMsMkiE3Pca5LUbWVbIWo2f25pL/vAI8s9hTNKsDw4fJyZfpS
+                        M/MsSLgEG3yodeqeiEy6/Pk+UBnqMSA9F521qz0Ju8XxYpql+K5GAoyMyAtw7VuQ
+                        +faULuT9SSM7VV1vqCvMqpMXGH1ORDMLXRRmjzVfdTU9d37Yg7sCfq3LCYEn3yKH
+                        CyRFKWLwcFo4kfKeEEOirhjxee92PPVBL+h7+Fz/MTjO/f+YD/7cHi8aLdsCAwEA
+                        AQKCAgAHwc7WIPguB6pbOWwOSZRA0eOC5w0WI0nGu8floC0uUQwZD2uaaTzQ1Ayg
+                        dn7ivG2KBAfUWHR/R+IeBhjeiyMTvRufemE+7zZoRDoiH2ugdMroDbmF63VxcGK3
+                        Ra0ErY3HkFSn5hO5uCkA1GHG7kAQHralJQsImNUD5pxf3TW9N644AdDx/GkkT6xj
+                        VC4dpLNNughSbL4S0qodoD+qat0v1dudd6eR5L6fhHxhhAciev+29kT1uVW6cdeI
+                        ThRlMjS/QIugdsb3YRIjGbGCsP/E3AWMaliF7bbYFXsnpHgRllyq5FkKrDtmCPbq
+                        zFF0DWB8jQb45QnrakbgdVoxis8sIflIsPnn4NmvLFJ0s//da7ADRu0ENmKCz6ez
+                        KUPxhJisHgFh91fSC4k+kLBqfWOWAACXAfueQK3YHlt4VRTl74rxXc/j6ai6w+1f
+                        8mTpY9Ka75HApcLBwkTzM3TWrXffWBcrLuKWCMLKmV08u8DAaS9U7GK6nPjkLae0
+                        jqnGHT0o4SxeUxboWw6UeMeAMm1xdw2wJLxcMxgnFxiRyXnnaJWoB3Pu9IX20rjc
+                        ZDj6EC0eWzm5CpkoHB5xVelX8SGZtTfcBsq7vtP4OaBc7oKt7v2GJy+ggCVnjzJH
+                        O9nhbibHaUhqB/+LoG6AUqk56zHnwBNlO4CRBLCHYcryQvHIQQKCAQEA0s90pDs3
+                        5tJBAsMRRnBKHXI2uT+ouUGxDJxNbY8uhlEgNf4MQAMvn31lGdEV9lnTUCkFxrzq
+                        ROdtj5dOvpCDAtYEFvD8g/wtaShxJFDcQPXwQtjgiqlibGu/8VEknOtMXGKS/k78
+                        crcamvfOwLoUj4TakpbxxICj3f6iRJfNdJsQxk5OEZzTTx78wnjAOXZHDaS9GX22
+                        oiHUZ1IU7zY0Qa2zGrm2Lo4McxSuRLtarfXWsm9tg/xQP83Ji5hctNPt1CsxiF//
+                        oxCH9cYzZCwdZZrhk9VX3PotZxz8JAWks0830p8HCJRMoO8q5FUZBajIUJI5DnoO
+                        QyonUtWVWFp/kQKCAQEA0PztFuiYtWl/BDLk/OD4D8BJ+ROM7vrtmSbZ2I0bPrag
+                        uI9a/+4TwZ4jH/z4EBxwsnyXKRB0KbB1UuM82Nv0BeowcNSMOXkBoW1hnprF/6bk
+                        BjcvK7cAFtPUSbkXAU4JClSITjYJBVYxxyZ3eT0zet50uWW5G9IyEEgvWdWpEQdF
+                        DxG7Qf/S7/o3XkoQKVk52dh/lxbcuOApMgKVj9h+bUnY7BaqhehhIP5Y6XlePzuM
+                        dhBuxnbt6hXCNNKwbf+UIthLaxv94E/zqMJmE8ApfjgiwrXjIrrN081ZrpAQbeoC
+                        NQ8mxKhupul0ESJ2hkj3X4WkMteT8ErkIz6Deat4qwKCAQAlzIrmk7OvUI3Vl/J2
+                        BdZUN1F2n+J57Tx4vWHovh6ieNNkuvupUqjsWQiSu3nLpUmNev2NJ/x9hF2RvJii
+                        9Lh4/rTXBDjS1Zmy3EyFLXaAs1h0M/z2/+4k8KEG/Pyqokob2pTuwmzjiM9dcAeD
+                        aRocrb6fQC9zg3leabTgxbNSMCeu1wWKhOsiqbS6jfoxk3KkEKDTfEYOBjDWodId
+                        HkP6btHJffkbmd7Dl7aznkBhJs5rSi2B1/Dvr89ul1AwIDvpqiEEieoFbAZk3DgE
+                        wyA2QrIl1sAdYEJZ1cmkD9r7R74Dpv4U3LpstNWlAVkuOZhJUh6m6N27z0gjwyY3
+                        JGrxAoIBAAGrxAmG2pG4wjc6YPJUqicWFoFTUrEmeHfdA6jjl/AsbaSMIOIi+S13
+                        IjjDQQh/8ba7oEnHw+YBby62emoReCYD9Vcxm91pxkWQJlOqUSL2JqSWFF55HBsS
+                        noPoYvKzuQbIHj7h17ifM86v1Ay4HI1C8hP5aD18tMHEkfxZ5Pwp3rd8IM8qSHl6
+                        uq6aUP7Do97GCF8g46rmv+2Sb7eyt3AQQxfAJqTjcsNcxUE4ozRGOZ1IDFqx4L0a
+                        Z28csCRxArI0oIW+t4zvlrcmtsI5qxtDP6Pm6GYCsFqdLbZjmH4IfPQHpvuzjQ7w
+                        luj8KY5xTukInIN7jcdCEgjmGw8B+/kCggEBAMYJzIHXepGQAeTDCFApcCxObS3k
+                        09k0WLRtOxOX660Dg5c+8GH8AcnOEjWb3aau8H5keafP69cN4/5ivq8TcKIzjjGR
+                        zDM5Zze2Mx+mteNW+TRl0lXBCyNWDHAmcQqeIxVe0eh62ZLKD8wVeY5wVCepPCxF
+                        0olYvGPwnfjDQ9X2q9JvX1UW90LlOsDTZEOeT4YXDibWzIhit2fMDjAAQvXmHVyk
+                        wfwn1KjTbaBy4XZqkqfQ2XW+ZzZshlks1hm+P7UMY6YR0uOF2rB3Y8YoVFirAzqW
+                        o6imPiRlT1b6xwl5/vAKSBLNIflh7pRiURnml30n/2OxDkY3FOPnJ7y72mM=
+                        -----END RSA PRIVATE KEY-----
+        jdbc:
+          order: 2
+          sql: SELECT PROPERTY_KEY, PROPERTY_VALUE FROM BATCH_CONFIG_PROPERTIES WHERE APPLICATION=? AND PROFILE=? AND LABEL=?
+          sql-without-profile: SELECT PROPERTY_KEY, PROPERTY_VALUE FROM BATCH_CONFIG_PROPERTIES WHERE APPLICATION=? AND PROFILE IS NULL AND LABEL=?
+
