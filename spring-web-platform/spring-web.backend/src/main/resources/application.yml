@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: spring-web.backend
+  profiles:
+    active: default
+  cloud:
+    config:
+      name: ${spring.application.name}
+      profile: ${spring.profiles.active}
+      fail-fast: true
+  banner:
+    location: classpath:banner/banner.txt
+
+logging:
+  config: classpath:logback/logback-${spring.profiles.active}.xml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
+
+---
+spring:
+  config:
+    activate:
+      on-profile: default
+    import: optional:configserver:http://localhost:8082/config
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import: optional:configserver:http://localhost:8082/config
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: qa
+    import: optional:configserver:http://localhost:8082/config
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: stg
+    import: optional:configserver:http://localhost:8082/config
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: optional:configserver:http://localhost:8082/config
