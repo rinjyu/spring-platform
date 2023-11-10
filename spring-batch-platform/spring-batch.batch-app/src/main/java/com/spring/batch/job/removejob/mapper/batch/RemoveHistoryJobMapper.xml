@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.batch.job.removejob.mapper.batch.RemoveHistoryJobMapper">
+
+    <select id="selectRemoveBatchJobExecutionCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        <![CDATA[
+            SELECT
+                COUNT(1)
+            FROM BATCH_JOB_EXECUTION
+            WHERE CREATE_TIME < TO_TIMESTAMP(#{removeDateTime} || '000000','YYYYMMDDHH24MISS')
+        ]]>
+    </select>
+
+    <delete id="deleteBatchStepExecutionContext" parameterType="java.lang.String">
+        <![CDATA[
+            DELETE
+            FROM BATCH_STEP_EXECUTION_CONTEXT
+            WHERE STEP_EXECUTION_ID IN (
+                                        SELECT
+                                            STEP_EXECUTION_ID
+                                        FROM BATCH_STEP_EXECUTION
+                                        WHERE JOB_EXECUTION_ID IN (
+                                                                    SELECT
+                                                                        JOB_EXECUTION_ID
+                                                                    FROM BATCH_JOB_EXECUTION
+                                                                    WHERE CREATE_TIME < TO_TIMESTAMP(#{removeDateTime} || '000000','YYYYMMDDHH24MISS')
+                                                                )
+                                    )
+        ]]>
+    </delete>
+
+    <delete id="deleteBatchStepExecution" parameterType="java.lang.String">
+        <![CDATA[
+            DELETE
+            FROM BATCH_STEP_EXECUTION
+            WHERE JOB_EXECUTION_ID IN (
+                                        SELECT
+                                            JOB_EXECUTION_ID
+                                        FROM BATCH_JOB_EXECUTION
+                                        WHERE CREATE_TIME < TO_TIMESTAMP(#{removeDateTime} || '000000','YYYYMMDDHH24MISS')
+                                    )
+        ]]>
+    </delete>
+
+    <delete id="deleteBatchJobExecutionContext" parameterType="java.lang.String">
+        <![CDATA[
+            DELETE
+            FROM BATCH_JOB_EXECUTION_CONTEXT
+            WHERE JOB_EXECUTION_ID IN (
+                                        SELECT
+                                            JOB_EXECUTION_ID
+                                        FROM BATCH_JOB_EXECUTION
+                                        WHERE CREATE_TIME < TO_TIMESTAMP(#{removeDateTime} || '000000','YYYYMMDDHH24MISS')
+                                    )
+        ]]>
+    </delete>
+
+    <delete id="deleteBatchJobExecutionParams" parameterType="java.lang.String">
+        <![CDATA[
+            DELETE
+            FROM BATCH_JOB_EXECUTION_PARAMS
+            WHERE JOB_EXECUTION_ID IN (
+                                        SELECT
+                                            JOB_EXECUTION_ID
+                                        FROM BATCH_JOB_EXECUTION
+                                        WHERE CREATE_TIME < TO_TIMESTAMP(#{removeDateTime} || '000000','YYYYMMDDHH24MISS')
+                                    )
+        ]]>
+    </delete>
+
+    <delete id="deleteBatchJobExecution" parameterType="java.lang.String">
+        <![CDATA[
+            DELETE
+            FROM BATCH_JOB_EXECUTION
+            WHERE CREATE_TIME < TO_TIMESTAMP(#{removeDateTime} || '000000','YYYYMMDDHH24MISS')
+        ]]>
+    </delete>
+
+    <delete id="deleteBatchJobInstance" parameterType="java.lang.String">
+        <![CDATA[
+            DELETE
+            FROM BATCH_JOB_INSTANCE
+            WHERE JOB_INSTANCE_ID NOT IN (
+                                            SELECT
+                                                JOB_INSTANCE_ID
+                                            FROM BATCH_JOB_EXECUTION
+                                        )
+        ]]>
+    </delete>
+</mapper>

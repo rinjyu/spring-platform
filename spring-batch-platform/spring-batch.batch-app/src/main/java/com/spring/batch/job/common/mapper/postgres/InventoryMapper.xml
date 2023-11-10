@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.batch.job.common.mapper.postgres.InventoryMapper">
+
+    <select id="getInventory" parameterType="com.spring.batch.job.common.domain.Inventory" resultType="com.spring.batch.job.common.domain.Inventory">
+        <![CDATA[
+            SELECT
+                  ITEM_ID
+                , UNIT_ITEM_ID
+                , USABLE_QTY
+            FROM INVENTORY
+            WHERE 1 = 1
+            AND ITEM_ID = #{itemId}
+            AND UNIT_ITEM_ID = #{unitItemId}
+        ]]>
+    </select>
+
+    <select id="getInventories" parameterType="com.spring.batch.job.common.domain.Inventory" resultType="com.spring.batch.job.common.domain.Inventory">
+        <![CDATA[
+            SELECT
+                  ITEM_ID
+                , UNIT_ITEM_ID
+                , USABLE_QTY
+            FROM INVENTORY
+            WHERE 1 = 1
+            AND ITEM_ID = #{itemId}
+        ]]>
+    </select>
+
+    <update id="upsertInventory" parameterType="com.spring.batch.job.common.domain.Inventory">
+        <![CDATA[
+            WITH UPSERT AS (
+                UPDATE INVENTORY
+                SET   BASE_QTY = #{baseQty:NUMERIC}
+                    , USABLE_QTY = #{usableQty:NUMERIC}
+                    , MOD_DTS = NOW()
+                    , MOD_ID = 'spring-batch'
+                WHERE ITEM_ID = #{itemId:VARCHAR}
+                AND   UNIT_ITEM_ID = #{unitItemId:VARCHAR}
+                RETURNING *
+            )
+            INSERT INTO INVENTORY (
+                  ITEM_ID
+                , UNIT_ITEM_ID
+                , BASE_QTY
+                , USABLE_QTY
+                , REG_DTS
+                , REG_ID
+                , MOD_DTS
+                , MOD_ID
+            )
+            SELECT
+                  #{itemId:VARCHAR}
+                , #{unitItemId:VARCHAR}
+                , #{baseQty:NUMERIC}
+                , #{usableQty:NUMERIC}
+                , NOW()
+                , 'spring-batch'
+                , NOW()
+                , 'spring-batch'
+            WHERE NOT EXISTS(SELECT * FROM UPSERT)
+        ]]>
+    </update>
+
+    <update id="callSpInventoryUsableQtyUpd" statementType="CALLABLE" parameterType="com.spring.batch.job.common.domain.Inventory">
+        <![CDATA[
+            CALL SP_INVENTORY_USABLE_QTY_UPD (
+                      #{itemId, mode=IN, jdbcType=VARCHAR}
+                    , #{unitItemId, mode=IN, jdbcType=VARCHAR}
+                    , #{modifierId, mode=IN, jdbcType=VARCHAR}
+                )
+        ]]>
+    </update>
+</mapper>

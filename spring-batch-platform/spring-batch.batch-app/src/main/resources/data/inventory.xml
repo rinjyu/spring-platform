@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inventories>
+    <inventory>
+        <itemId>0000000000001</itemId>
+        <unitItemId>00000</unitItemId>
+        <baseQty>100</baseQty>
+        <usableQty>100</usableQty>
+    </inventory>
+    <inventory>
+        <itemId>0000000000002</itemId>
+        <unitItemId>00000</unitItemId>
+        <baseQty>100</baseQty>
+        <usableQty>100</usableQty>
+    </inventory>
+    <inventory>
+        <itemId>0000000000003</itemId>
+        <unitItemId>00000</unitItemId>
+        <baseQty>100</baseQty>
+        <usableQty>100</usableQty>
+    </inventory>
+    <inventory>
+        <itemId>0000000000004</itemId>
+        <unitItemId>00000</unitItemId>
+        <baseQty>100</baseQty>
+        <usableQty>100</usableQty>
+    </inventory>
+    <inventory>
+        <itemId>0000000000005</itemId>
+        <unitItemId>00000</unitItemId>
+        <baseQty>100</baseQty>
+        <usableQty>100</usableQty>
+    </inventory>
+</inventories>

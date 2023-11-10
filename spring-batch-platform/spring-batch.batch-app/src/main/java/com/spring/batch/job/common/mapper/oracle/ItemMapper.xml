@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.batch.job.common.mapper.oracle.ItemMapper">
+
+    <select id="getItem" parameterType="com.spring.batch.job.common.domain.Item" resultType="com.spring.batch.job.common.domain.Item">
+        <![CDATA[
+            SELECT
+                  ITEM_ID
+                , ITEM_NAME
+                , UNIT_ITEM_ID
+                , UNIT_ITEM_NAME
+            FROM ITEM
+            WHERE 1 = 1
+            AND ITEM_ID = #{itemId}
+            AND UNIT_ITEM_ID = #{unitItemId}
+        ]]>
+    </select>
+
+    <select id="getItems" parameterType="com.spring.batch.job.common.domain.Item" resultType="com.spring.batch.job.common.domain.Item">
+        <![CDATA[
+            SELECT
+                  ITEM_ID
+                , ITEM_NAME
+                , UNIT_ITEM_ID
+                , UNIT_ITEM_NAME
+            FROM ITEM
+            WHERE 1 = 1
+            AND ITEM_ID = #{itemId}
+        ]]>
+    </select>
+</mapper>
